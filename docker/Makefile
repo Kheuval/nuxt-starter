@@ -1,8 +1,8 @@
-include .env.local
+include .env
 
 .DEFAULT_GOAL := help
 
-.PHONY: help lint lint/eslint lint/tsc tests dev
+.PHONY: help certificates
 
 help: ## Show help message
 	@grep -E '^[a-zA-Z0-9_/.-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
