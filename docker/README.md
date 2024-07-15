@@ -5,7 +5,7 @@
 
 # Symlink apps
 
-`cd caddy && ln -s ../apps/ ./mount && cd ../`
+`cd caddy && ln -s ../../apps/ ../mount && cd ../`
 
 # Generate dev certificates
 
