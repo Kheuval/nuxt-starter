@@ -22,5 +22,5 @@ tests: ## Run tests
 	@echo "👉 ${GREEN}Testing...${END}"
 	. "$(NVM_DIR)/nvm.sh" && pnpm vitest run
 
-dev: ## Start the dev server with env variables from .env.local
-	. "$(NVM_DIR)/nvm.sh" && nvm exec dotenv -e .env.local pnpm run dev
+restart: ## Restart the dev server
+	cd ../../docker && docker compose kill app && docker compose up -d app

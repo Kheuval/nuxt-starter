@@ -1,0 +1,50 @@
+services:
+    app:
+        container_name: ${COMPOSE_PROJECT_NAME}_nuxt
+        ports:
+            - "3000:3000"
+        user: root
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /srv
+        volumes:
+            - ./mount/apps/nuxt/:/srv
+        stdin_open: true
+        tty: true
+
+    mysql:
+        container_name: ${COMPOSE_PROJECT_NAME}_mysql
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${COMPOSE_PROJECT_NAME}_dev
+            MYSQL_USER: ${PROJECT_NAME}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - mysql_data:/var/lib/mysql:rw
+
+    phpmyadmin:
+        container_name: ${COMPOSE_PROJECT_NAME}_pma
+        image: phpmyadmin
+        environment:
+            DOMAIN_NAME: pma.${PROJECT_NAME}.dev
+            PMA_HOSTS: mysql
+            PMA_USER: root
+            PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            PMA_ARBITRARY: 1
+
+    caddy:
+        container_name: ${COMPOSE_PROJECT_NAME}_caddy
+        image: caddy:2.8
+        environment:
+            DOMAIN_NAME: ${PROJECT_NAME}.dev
+            PROJECT_NAME: ${PROJECT_NAME}
+        volumes:
+            - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+            - ./caddy/${PROJECT_NAME}.dev.pem:/usr/local/etc/caddy/certs/${PROJECT_NAME}.dev.pem
+            - ./caddy/${PROJECT_NAME}.dev-key.pem:/usr/local/etc/caddy/certs/${PROJECT_NAME}.dev-key.pem
+            - ./mount/apps/nuxt/:/srv
+
+volumes:
+    mysql_data:
