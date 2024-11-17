@@ -1,4 +1,7 @@
+include .env.local
+
 NVM_DIR=$(HOME)/.nvm
+CONTAINERS=$(shell docker compose ps --services)
 
 .DEFAULT_GOAL := help
 
@@ -22,5 +25,11 @@ tests: ## Run tests
 	@echo "👉 ${GREEN}Testing...${END}"
 	. "$(NVM_DIR)/nvm.sh" && pnpm vitest run
 
-restart: ## Restart the dev server
-	cd ../../docker && docker compose kill app && docker compose up -d app
+certificates: ## Generate dev certificates /!\ For testing purposes only /!\ 
+	cd caddy && mkcert ${DOMAIN_NAME} && cd ..
+
+build: ## Build and start project
+	docker compose kill ${CONTAINERS} && \
+	docker compose rm -f ${CONTAINERS} && \
+	docker compose --env-file .env.local up -d --build ${CONTAINERS} && \
+	docker compose ps ${CONTAINERS}
