@@ -1,0 +1,5 @@
+:443 {
+    tls /usr/local/etc/caddy/certs/{$DOMAIN_NAME}.pem /usr/local/etc/caddy/certs/{$DOMAIN_NAME}-key.pem
+
+    reverse_proxy app:3000
+}

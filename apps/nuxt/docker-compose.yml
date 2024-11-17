@@ -1,0 +1,33 @@
+services:
+    app:
+        container_name: ${PROJECT_NAME}_nuxt_prod
+        build:
+            context: .
+        ports:
+            - '3000:3000'
+
+    mysql:
+        container_name: ${PROJECT_NAME}_mysql_prod
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${PROJECT_NAME}_dev
+            MYSQL_USER: ${PROJECT_NAME}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - mysql_data:/var/lib/mysql:rw
+
+    caddy:
+        container_name: ${PROJECT_NAME}_caddy_prod
+        image: caddy:2.8
+        environment:
+            DOMAIN_NAME: "${DOMAIN_NAME}"
+            PROJECT_NAME: ${PROJECT_NAME}
+        volumes:
+            - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+            - ./caddy/${DOMAIN_NAME}.pem:/usr/local/etc/caddy/certs/${DOMAIN_NAME}.pem
+            - ./caddy/${DOMAIN_NAME}-key.pem:/usr/local/etc/caddy/certs/${DOMAIN_NAME}-key.pem
+            - ./:/srv
+
+volumes:
+    mysql_data:
